@@ -7,6 +7,33 @@
 import { BaseModel, column } from '@adonisjs/lucid/orm'
 import { DateTime } from 'luxon'
 
+export class QrCodeSchema extends BaseModel {
+  static $columns = ['backgroundColor', 'content', 'createdAt', 'errorCorrection', 'foregroundColor', 'id', 'size', 'title', 'type', 'updatedAt', 'userId'] as const
+  $columns = QrCodeSchema.$columns
+  @column()
+  declare backgroundColor: string
+  @column()
+  declare content: string
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime | null
+  @column()
+  declare errorCorrection: string
+  @column()
+  declare foregroundColor: string
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare size: number
+  @column()
+  declare title: string
+  @column()
+  declare type: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare userId: number
+}
+
 export class UserSchema extends BaseModel {
   static $columns = ['createdAt', 'email', 'fullName', 'id', 'password', 'updatedAt'] as const
   $columns = UserSchema.$columns

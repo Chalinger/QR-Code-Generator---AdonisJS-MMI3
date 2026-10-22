@@ -2,6 +2,10 @@ import { UserSchema } from '#database/schema'
 import hash from '@adonisjs/core/services/hash'
 import { compose } from '@adonisjs/core/helpers'
 import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
+import { hasMany } from '@adonisjs/lucid/orm'
+import type { HasMany } from '@adonisjs/lucid/types/relations'
+import QrCode from '#models/qr_code'
+
 
 /**
  * User model represents a user in the application.
@@ -9,6 +13,10 @@ import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
  * through the withAuthFinder mixin.
  */
 export default class User extends compose(UserSchema, withAuthFinder(hash)) {
+
+  @hasMany(() => QrCode)
+  declare qrCodes: HasMany<typeof QrCode>
+
   /**
    * Get the user's initials from their full name or email.
    * Returns the first letter of first and last name if available,
