@@ -13,6 +13,7 @@
 
 import { DateTime } from 'luxon'
 import { VineDate } from '@vinejs/vine'
+import vine, { SimpleMessagesProvider } from '@vinejs/vine'
 
 declare module '@vinejs/vine/types' {
   interface VineGlobalTransforms {
@@ -21,3 +22,11 @@ declare module '@vinejs/vine/types' {
 }
 
 VineDate.transform((value) => DateTime.fromJSDate(value))
+
+vine.messagesProvider = new SimpleMessagesProvider({
+  'required': 'Ce champ est obligatoire.',
+  'url': 'Saisissez une URL valide commençant par http:// ou https://.',
+  // …
+  'foregroundColor.regex': 'Couleur invalide : le format attendu est #rrggbb.',
+  'email.database.unique': 'Un compte existe déjà avec cette adresse e-mail.',
+})
