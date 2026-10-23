@@ -1,3 +1,5 @@
 .adonisjs
 node_modules
 build
+# Généré par "node ace migration:run" : ne pas formater à la main
+database/schema.ts
