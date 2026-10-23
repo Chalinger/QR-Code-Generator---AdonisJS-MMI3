@@ -25,7 +25,7 @@ export class QrCodeSchema extends BaseModel {
   @column()
   declare size: number
   @column()
-  declare title: string
+  declare title: string | null
   @column()
   declare type: string
   @column.dateTime({ autoCreate: true, autoUpdate: true })
