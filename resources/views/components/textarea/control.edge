@@ -1,5 +1,9 @@
-@let(classes = [])
+@let(classes = ['field__input'])
 
+{{--
+  {{ }} et non {{{ }}} : la valeur doit être échappée, sinon un contenu
+  comme "</textarea><script>…" serait interprété comme du HTML.
+--}}
 <textarea {{
   $props
     .except(['value'])
@@ -12,4 +16,4 @@
       'aria-describedby': $context.hasErrors ? `${$context.id}-error` : '',
     })
     .toAttrs()
-}}>{{{ $context.oldValue || $props.get('value') || '' }}}</textarea>
+}}>{{ $context.oldValue || $props.get('value') || '' }}</textarea>

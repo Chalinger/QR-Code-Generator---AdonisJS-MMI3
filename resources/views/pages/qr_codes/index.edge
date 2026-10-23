@@ -1,0 +1,40 @@
+@layouts.app({ title: 'Mes QR codes' })
+  @page({ title: 'Mes QR codes', description: 'Votre historique, du plus récent au plus ancien.' })
+    @slot('actions')
+      @link({ route: 'qr_codes.create', class: 'btn btn--primary' })
+        @svg('lucide:plus', { width: 16, height: 16 })
+        Nouveau QR code
+      @end
+    @end
+
+    @if(items.length)
+      <p class="history__count">{{ items.length }} QR code{{ items.length > 1 ? 's' : '' }}</p>
+      <ul class="history">
+        @each(item in items)
+          <li>
+            @link({ route: 'qr_codes.show', routeParams: [item.qrCode.id], class: 'history__card' })
+              <span class="viewfinder viewfinder--sm">
+                <img class="qr-image" src="{{ item.image }}" alt="" width="160" height="160" />
+              </span>
+              <span class="history__title">{{ item.qrCode.displayTitle }}</span>
+              <span class="history__meta">
+                {{ item.qrCode.type === 'url' ? 'Lien' : 'Texte' }}
+                @if(item.qrCode.createdAt)
+                  · {{ item.qrCode.createdAt.setLocale('fr').toFormat('d LLL yyyy') }}
+                @end
+              </span>
+            @end
+          </li>
+        @end
+      </ul>
+    @else
+      <div class="empty">
+        <h2 class="empty__title">Aucun QR code pour l'instant</h2>
+        <p class="empty__text">Créez votre premier QR code : un lien ou un texte, avec vos couleurs.</p>
+        @link({ route: 'qr_codes.create', class: 'btn btn--primary' })
+          Créer un QR code
+        @end
+      </div>
+    @end
+  @end
+@end

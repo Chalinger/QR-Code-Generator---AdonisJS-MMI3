@@ -1,0 +1,100 @@
+@let(levels = {
+  L: 'L : faible (7 %)',
+  M: 'M : moyen (15 %)',
+  Q: 'Q : élevé (25 %)',
+  H: 'H : maximal (30 %)',
+})
+@layouts.app({ title: qrCode.displayTitle })
+  <div class="detail">
+    <div class="detail__visual">
+      <div class="viewfinder">
+        <img
+          class="qr-image detail__image"
+          src="{{ image }}"
+          alt="QR code : {{ qrCode.displayTitle }}"
+          width="{{ qrCode.size }}"
+          height="{{ qrCode.size }}"
+        />
+      </div>
+    </div>
+
+    <div class="detail__info">
+      @link({ route: 'qr_codes.index', class: 'detail__back' })
+        @svg('lucide:arrow-left', { width: 15, height: 15 })
+        Mes QR codes
+      @end
+
+      <h1 class="detail__title">{{ qrCode.displayTitle }}</h1>
+
+      <dl class="specs">
+        <div class="specs__row">
+          <dt>Type</dt>
+          <dd>{{ qrCode.type === 'url' ? 'Lien (URL)' : 'Texte libre' }}</dd>
+        </div>
+        <div class="specs__row">
+          <dt>Contenu</dt>
+          <dd>
+            @if(qrCode.type === 'url')
+              {{-- Sans risque : le validateur n'accepte que http:// et https:// --}}
+              <a class="il detail__link" href="{{ qrCode.content }}" target="_blank" rel="noopener noreferrer">{{ qrCode.content }}</a>
+            @else
+              {{-- Sur une seule ligne : pre-line conserverait sinon les retours à la ligne du template --}}
+              <p class="detail__text">{{ qrCode.content }}</p>
+            @end
+          </dd>
+        </div>
+        <div class="specs__row">
+          <dt>Couleurs</dt>
+          <dd class="specs__colors">
+            <span class="swatch" style="background: {{ qrCode.foregroundColor }}"></span>
+            <span class="mono">{{ qrCode.foregroundColor }}</span>
+            <span class="specs__sep">sur</span>
+            <span class="swatch" style="background: {{ qrCode.backgroundColor }}"></span>
+            <span class="mono">{{ qrCode.backgroundColor }}</span>
+          </dd>
+        </div>
+        <div class="specs__row">
+          <dt>Taille</dt>
+          <dd>{{ qrCode.size }} × {{ qrCode.size }} px</dd>
+        </div>
+        <div class="specs__row">
+          <dt>Correction</dt>
+          <dd>{{ levels[qrCode.errorCorrection] ?? qrCode.errorCorrection }}</dd>
+        </div>
+        @if(qrCode.createdAt)
+          <div class="specs__row">
+            <dt>Créé le</dt>
+            <dd>{{ qrCode.createdAt.setLocale('fr').toFormat('d LLL yyyy') }}</dd>
+          </div>
+        @end
+      </dl>
+
+      <div class="detail__actions">
+        {{-- Le lien pointe vers l'image elle-même ; download demande de l'enregistrer --}}
+        <a class="btn btn--primary" href="{{ image }}" download="qr-code-{{ qrCode.id }}.png">
+          @svg('lucide:download', { width: 16, height: 16 })
+          Télécharger en PNG
+        </a>
+        @link({ route: 'qr_codes.edit', routeParams: [qrCode.id], class: 'btn btn--secondary' })
+          @svg('lucide:pencil', { width: 15, height: 15 })
+          Modifier
+        @end
+      </div>
+
+      {{-- Suppression en deux temps, avec Alpine.js --}}
+      <div class="danger" x-data="{ confirming: false }">
+        <button type="button" class="btn btn--ghost btn--danger" x-show="!confirming" x-on:click="confirming = true">
+          @svg('lucide:trash-2', { width: 15, height: 15 })
+          Supprimer ce QR code
+        </button>
+        <div class="danger__confirm" x-show="confirming" x-cloak>
+          <p>Supprimer définitivement ce QR code ? Cette action est irréversible.</p>
+          @form({ route: 'qr_codes.destroy', routeParams: [qrCode.id], class: 'danger__actions' })
+            <button type="submit" class="btn btn--danger-solid">Oui, supprimer</button>
+            <button type="button" class="btn btn--ghost" x-on:click="confirming = false">Annuler</button>
+          @end
+        </div>
+      </div>
+    </div>
+  </div>
+@end

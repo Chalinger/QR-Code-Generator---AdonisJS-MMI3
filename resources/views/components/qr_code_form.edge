@@ -1,0 +1,143 @@
+{{--
+  Formulaire partagé par la création et la modification d'un QR code.
+    @!qrCodeForm()            création
+    @!qrCodeForm({ qrCode })  modification (champs préremplis)
+
+  Valeur affichée dans chaque champ, par ordre de priorité :
+    1. la saisie de l'utilisateur si la validation a échoué : old('champ') ;
+    2. sinon la valeur enregistrée du QR code (modification) ;
+    3. sinon la valeur par défaut (création).
+  input.control et textarea.control gèrent déjà le point 1 : on leur passe
+  seulement la valeur 2 ou 3 dans "value".
+
+  novalidate : toute la validation est faite par VineJS, côté serveur.
+--}}
+@let(qrCode = $props.get('qrCode'))
+@let(isEdit = !!qrCode)
+@let(currentType = old('type', isEdit ? qrCode.type : 'url'))
+@let(currentLevel = old('errorCorrection', isEdit ? qrCode.errorCorrection : 'M'))
+@let(levels = [
+  { value: 'L', name: 'L : faible (7 % de redondance)' },
+  { value: 'M', name: 'M : moyen (15 %)' },
+  { value: 'Q', name: 'Q : élevé (25 %)' },
+  { value: 'H', name: 'H : maximal (30 %)' },
+])
+
+@form({
+  route: isEdit ? 'qr_codes.update' : 'qr_codes.store',
+  routeParams: isEdit ? [qrCode.id] : [],
+  class: 'qr-form',
+  novalidate: true,
+  'x-data': `{ type: '${currentType === 'text' ? 'text' : 'url'}' }`,
+})
+  <fieldset class="qr-form__group">
+    <legend class="qr-form__legend">Contenu</legend>
+
+    @field.root({ name: 'type' })
+      <span class="field__label" id="type-label">Type de contenu</span>
+      <div class="choice" role="radiogroup" aria-labelledby="type-label">
+        <label class="choice__option">
+          <input type="radio" name="type" value="url" x-model="type" {{ currentType === 'url' ? 'checked' : '' }} />
+          <span>Lien (URL)</span>
+        </label>
+        <label class="choice__option">
+          <input type="radio" name="type" value="text" x-model="type" {{ currentType === 'text' ? 'checked' : '' }} />
+          <span>Texte libre</span>
+        </label>
+      </div>
+      @!field.error()
+    @end
+
+    @field.root({ name: 'content' })
+      {{-- Le libellé, l'exemple et l'aide suivent le type choisi (Alpine.js) --}}
+      @field.label()
+        <span x-text="type === 'url' ? 'Adresse du lien' : 'Texte'">{{ currentType === 'text' ? 'Texte' : 'Adresse du lien' }}</span>
+      @end
+      @!textarea.control({
+        value: isEdit ? qrCode.content : '',
+        rows: 4,
+        maxlength: 400,
+        placeholder: currentType === 'text' ? 'Votre texte…' : 'https://exemple.fr',
+        'x-bind:placeholder': "type === 'url' ? 'https://exemple.fr' : 'Votre texte…'",
+      })
+      <span class="field__hint" x-show="type === 'url'" {{ currentType === 'text' ? 'x-cloak' : '' }}>Doit commencer par http:// ou https://. 400 caractères maximum.</span>
+      <span class="field__hint" x-show="type === 'text'" {{ currentType === 'text' ? '' : 'x-cloak' }}>Les retours à la ligne sont conservés. 400 caractères maximum.</span>
+      @!field.error()
+    @end
+
+    @field.root({ name: 'title' })
+      @!field.label({ text: 'Titre (facultatif)' })
+      @!input.control({
+        value: isEdit ? qrCode.title : '',
+        maxlength: 100,
+        placeholder: 'Ex. : Menu du restaurant',
+      })
+      <span class="field__hint">Pour le retrouver dans l'historique. Sinon, le début du contenu est affiché.</span>
+      @!field.error()
+    @end
+  </fieldset>
+
+  <fieldset class="qr-form__group">
+    <legend class="qr-form__legend">Apparence</legend>
+
+    <div class="qr-form__row">
+      @field.root({ name: 'foregroundColor' })
+        @!field.label({ text: 'Couleur des modules' })
+        @!input.control({
+          type: 'color',
+          class: 'field__input--color',
+          value: isEdit ? qrCode.foregroundColor : '#000000',
+        })
+        @!field.error()
+      @end
+
+      @field.root({ name: 'backgroundColor' })
+        @!field.label({ text: 'Couleur du fond' })
+        @!input.control({
+          type: 'color',
+          class: 'field__input--color',
+          value: isEdit ? qrCode.backgroundColor : '#ffffff',
+        })
+        @!field.error()
+      @end
+    </div>
+    <p class="field__hint">Gardez un bon contraste (modules foncés sur fond clair) pour que le code reste lisible.</p>
+
+    <div class="qr-form__row">
+      @field.root({ name: 'size' })
+        @!field.label({ text: 'Taille (pixels)' })
+        @!input.control({
+          type: 'number',
+          min: 100,
+          max: 1000,
+          step: 10,
+          value: isEdit ? qrCode.size : 300,
+        })
+        <span class="field__hint">Entre 100 et 1000.</span>
+        @!field.error()
+      @end
+
+      @field.root({ name: 'errorCorrection' })
+        @!field.label({ text: "Correction d'erreur" })
+        @!select.control({
+          options: levels.map((level) => ({ ...level, isSelected: level.value === currentLevel })),
+        })
+        <span class="field__hint">Plus le niveau est élevé, mieux le code résiste aux taches et aux rayures.</span>
+        @!field.error()
+      @end
+    </div>
+  </fieldset>
+
+  <div class="qr-form__actions">
+    @!button({ type: 'submit', text: isEdit ? 'Enregistrer les modifications' : 'Créer le QR code' })
+    @if(isEdit)
+      @link({ route: 'qr_codes.show', routeParams: [qrCode.id], class: 'btn btn--ghost' })
+        Annuler
+      @end
+    @else
+      @link({ route: 'qr_codes.index', class: 'btn btn--ghost' })
+        Annuler
+      @end
+    @end
+  </div>
+@end
