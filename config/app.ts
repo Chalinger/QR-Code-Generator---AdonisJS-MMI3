@@ -45,8 +45,12 @@ export const http = defineConfig({
      * When enabled, all redirects automatically carry over the current
      * request's query string parameters to the redirect destination.
      * Use withQs(false) to opt out for a specific redirect.
+     *
+     * Désactivé : le method spoofing passe par la query string
+     * (/qr-codes/1?_method=PUT), qui serait sinon recopiée dans la
+     * redirection vers show après une modification.
      */
-    forwardQueryString: true,
+    forwardQueryString: false,
   },
 
   /**

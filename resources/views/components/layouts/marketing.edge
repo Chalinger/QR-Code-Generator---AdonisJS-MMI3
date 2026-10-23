@@ -22,8 +22,8 @@
         <div class="header__right">
           @!themeToggle()
           @if(auth.user)
-            @link({ route: 'dashboard', class: 'btn btn--primary btn--sm' })
-              Dashboard
+            @link({ route: 'qr_codes.index', class: 'btn btn--primary btn--sm' })
+              Mes QR codes
             @end
           @else
             @link({ route: 'session.create', class: 'btn btn--ghost btn--sm' })

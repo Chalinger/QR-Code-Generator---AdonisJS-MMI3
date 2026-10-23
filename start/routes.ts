@@ -23,9 +23,17 @@ router
   })
   .use(middleware.guest())
 
+/**
+ * Routes réservées aux utilisateurs connectés. Le middleware auth s'exécute
+ * avant le contrôleur : sans session valide, redirection vers /login.
+ *
+ * router.resource() déclare les 7 routes du CRUD (qr_codes.index,
+ * qr_codes.create, qr_codes.store, qr_codes.show, qr_codes.edit,
+ * qr_codes.update et qr_codes.destroy) : voir "node ace list:routes".
+ */
 router
   .group(() => {
-    router.on('/dashboard').render('pages/dashboard').as('dashboard')
     router.post('logout', [controllers.Session, 'destroy'])
+    router.resource('qr-codes', controllers.QrCodes)
   })
   .use(middleware.auth())
