@@ -5,5 +5,6 @@
 
 export const controllers = {
   NewAccount: () => import('#controllers/new_account_controller'),
+  QrCodes: () => import('#controllers/qr_codes_controller'),
   Session: () => import('#controllers/session_controller'),
 }
