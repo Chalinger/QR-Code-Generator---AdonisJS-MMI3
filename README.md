@@ -129,15 +129,3 @@ Les routes `/qr-codes` sont protégées par le middleware `auth`. Les formulaire
 | `resources/css/app.css` | Feuille de style |
 
 L'image d'un QR code n'est pas stockée : elle est recalculée à partir de ses caractéristiques à chaque affichage.
-
-## Utilisation de l'IA
-
-> **À compléter par l'auteur.**
-
-Ce qui peut être constaté dans l'historique git : à partir du 23 octobre 2026, l'assistant **Claude Code** (Anthropic) a terminé le projet en suivant le guide de la version de référence (`GUIDE.md`). Les commits concernés sont signés `Co-Authored-By: Claude`. Il a :
-
-- corrigé la migration (titre facultatif) et complété les messages de validation en français ;
-- terminé le contrôleur, puis écrit les routes, le service de génération, les vues, l'interface et ce README ;
-- déroulé le scénario de test manuel du guide dans un navigateur.
-
-À ajouter : ce que vous avez fait vous-même (étapes 1 à 4, début de l'étape 5), ce que vous avez demandé à l'IA, ce que vous avez vérifié ou modifié dans ce qu'elle a produit, et ce que vous en retenez.
