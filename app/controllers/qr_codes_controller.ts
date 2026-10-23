@@ -1,3 +1,4 @@
+import { generateQrCodeDataUrl } from '#services/qr_code_generator'
 import { qrCodeValidator } from '#validators/qr_code'
 import type { HttpContext } from '@adonisjs/core/http'
 
@@ -22,7 +23,15 @@ export default class QrCodesController {
       .orderBy('created_at', 'desc')
       .orderBy('id', 'desc')
 
-    return view.render('pages/qr_codes/index', { qrCodes })
+    // Un petit aperçu (160 px) par QR code, générés en parallèle
+    const items = await Promise.all(
+      qrCodes.map(async (qrCode) => ({
+        qrCode,
+        image: await generateQrCodeDataUrl(qrCode, 160),
+      }))
+    )
+
+    return view.render('pages/qr_codes/index', { items })
   }
 
   /**
@@ -53,8 +62,9 @@ export default class QrCodesController {
   async show({ params, auth, view }: HttpContext) {
     const user = auth.getUserOrFail()
     const qrCode = await user.related('qrCodes').query().where('id', params.id).firstOrFail()
+    const image = await generateQrCodeDataUrl(qrCode)
 
-    return view.render('pages/qr_codes/show', { qrCode })
+    return view.render('pages/qr_codes/show', { qrCode, image })
   }
 
   /**
