@@ -1,59 +1,67 @@
 {{--
-  Top-level app navigation. Add an entry here for every new area of your
-  app, and it shows up in the navigation bar with its active state handled.
+  Layout unique de l'application : @layouts.app({ title: '…' }).
+
+  L'en-tête s'adapte : navigation et déconnexion pour un utilisateur connecté,
+  liens de connexion et d'inscription sinon.
+
+  auth?.user et non auth.user : sur une URL qui ne correspond à aucune route,
+  les middlewares de route ne s'exécutent pas et "auth" n'existe pas dans la
+  vue (page 404).
 --}}
-@let(nav = [
-  { label: 'Mes QR codes', route: 'qr_codes.index', icon: 'lucide:history' },
-  { label: 'Nouveau QR code', route: 'qr_codes.create', icon: 'lucide:plus' },
-])
 @let(pageTitle = $props.get('title'))
+@let(user = auth?.user)
+@let(currentPath = request.url())
+@let(indexUrl = urlFor('qr_codes.index'))
+@let(createUrl = urlFor('qr_codes.create'))
+@let(isCreatePage = currentPath === createUrl)
+@let(isHistoryPage = !isCreatePage && (currentPath === indexUrl || currentPath.startsWith(`${indexUrl}/`)))
 <!DOCTYPE html>
-<html
-  lang="en-us"
-  data-theme="{{
-    request.plainCookie('app_theme', {
-      defaultValue: 'light',
-      encoded: false,
-    })
-  }}"
->
+<html lang="fr">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{{ pageTitle ? `${pageTitle} - AdonisJS` : 'AdonisJS — Starter Kit' }}</title>
+    <title>{{ pageTitle ? `${pageTitle} · Générateur de QR codes` : 'Générateur de QR codes' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('dumper')
   </head>
   <body>
-    <header class="header header--bar">
+    <header class="header">
       <div class="header__inner">
-        @!logo({ size: 28 })
-        <div class="header__right">
-          @!themeToggle()
-          @form({ route: 'session.destroy', method: 'POST' })
-            <button type="submit" class="btn btn--secondary btn--sm">
+        @!logo()
+
+        @if(user)
+          <nav class="nav" aria-label="Navigation principale">
+            <a class="nav__link" href="{{ indexUrl }}" {{ isHistoryPage ? 'aria-current=page' : '' }}>Mes QR codes</a>
+            <a class="nav__link" href="{{ createUrl }}" {{ isCreatePage ? 'aria-current=page' : '' }}>Nouveau QR code</a>
+          </nav>
+          {{-- Déconnexion : un formulaire POST protégé par le jeton CSRF, pas un simple lien --}}
+          @form({ route: 'session.destroy', class: 'header__logout' })
+            <button type="submit" class="btn btn--secondary btn--sm" title="{{ user.email }}">
               @svg('lucide:log-out', { width: 15, height: 15 })
-              Log out
+              Se déconnecter
             </button>
           @end
-        </div>
+        @else
+          <div class="header__guest">
+            @link({ route: 'session.create', class: 'btn btn--ghost btn--sm' })
+              Se connecter
+            @end
+            @link({ route: 'new_account.create', class: 'btn btn--primary btn--sm' })
+              Créer un compte
+            @end
+          </div>
+        @end
       </div>
     </header>
 
-    <nav class="subnav">
-      <div class="subnav__inner">
-        @each(item in nav)
-          @navLink({ route: item.route, class: 'subnav__item' })
-            @if(item.icon)
-              @svg(item.icon, { width: 14, height: 14 })
-            @end
-            {{ item.label }}
-          @end
-        @end
-      </div>
-    </nav>
+    <main class="main">{{{ await $slots.main() }}}</main>
 
-    <div class="app-main">{{{ await $slots.main() }}}</div>
+    <footer class="footer">
+      <div class="footer__inner">
+        Générateur de QR codes · MMI 3 · Développement back-end avancé (AdonisJS)
+      </div>
+    </footer>
+
     @include('partials/flash_alerts')
   </body>
 </html>

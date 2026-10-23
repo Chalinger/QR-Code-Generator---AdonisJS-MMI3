@@ -1,5 +1,9 @@
 import Alpine from 'alpinejs'
 
+/**
+ * Message flash : apparaît après un court délai puis disparaît au bout de 5 s
+ * (components/alert/root.edge).
+ */
 Alpine.data('alert', function () {
   return {
     isVisible: false,
@@ -13,21 +17,6 @@ Alpine.data('alert', function () {
       setTimeout(() => {
         this.dismiss()
       }, 5000)
-    },
-  }
-})
-
-Alpine.data('themeToggle', function () {
-  return {
-    theme: 'light',
-    init() {
-      this.theme = this.$el.dataset.initialTheme || 'light'
-    },
-    toggle() {
-      const next = this.theme === 'dark' ? 'light' : 'dark'
-      this.theme = next
-      document.documentElement.setAttribute('data-theme', next)
-      document.cookie = `app_theme=${next}; path=/; max-age=${60 * 60 * 24 * 365}; samesite=lax`
     },
   }
 })

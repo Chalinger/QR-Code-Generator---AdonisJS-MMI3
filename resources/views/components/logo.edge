@@ -1,22 +1,11 @@
-@let(size = $props.get('size', 26))
-@link({
-  route: 'home',
-  'aria-label': 'AdonisJS',
-  style: 'display: inline-flex; color: var(--ink);',
-})
-  <svg
-    width="{{ size }}"
-    height="{{ size }}"
-    viewBox="0 0 160 160"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    aria-hidden="true"
-  >
-    <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
-      d="M0 80.0001C0 144.521 15.4786 160 79.9999 160 144.521 160 160 144.521 160 80.0001 160 15.4786 144.521 0 79.9999 0 15.4786 0 0 15.4786 0 80.0001zm32.2607 16.6191l25.0918-57.0266c4.2361-9.613 12.3825-14.8268 22.6474-14.8268 10.265 0 18.4113 5.2138 22.6481 14.8268l25.091 57.0266c1.141 2.77 2.118 6.3538 2.118 9.4498 0 14.175-9.939 24.114-24.114 24.114-4.828 0-8.6629-1.232-12.5444-2.479-3.9771-1.278-8.0036-2.572-13.1987-2.572-5.1349 0-9.2597 1.306-13.3154 2.589-3.9233 1.241-7.7814 2.462-12.4279 2.462-14.1752 0-24.1141-9.939-24.1141-24.114 0-3.096.9776-6.6798 2.1182-9.4498zm47.7392-47.0871L55.2344 105.581c7.332-3.422 15.8043-5.051 24.7655-5.051 8.6358 0 17.434 1.629 24.4401 5.051L79.9999 49.5321z"
-      fill="currentColor"
-    />
+{{--
+  Logo : un « motif de repérage », l'un des trois carrés présents dans les
+  coins de tout QR code (7 × 7 modules).
+--}}
+@link({ route: 'home', class: 'logo', 'aria-label': 'Générateur de QR codes, accueil' })
+  <svg class="logo__mark" width="28" height="28" viewBox="0 0 7 7" aria-hidden="true">
+    <path fill="currentColor" fill-rule="evenodd" d="M0 0h7v7H0zM1 1v5h5V1z" />
+    <rect fill="currentColor" x="2" y="2" width="3" height="3" />
   </svg>
+  <span class="logo__text">QR<span class="logo__light">codes</span></span>
 @end

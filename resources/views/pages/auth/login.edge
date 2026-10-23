@@ -1,49 +1,45 @@
-@layouts.auth()
-  <h1 class="auth__title">Welcome back</h1>
-  <p class="auth__sub">Sign in to continue building.</p>
-  @form({
-    route: 'session.store',
-    method: 'POST',
-    class: 'auth__form',
-    'x-data': '{ submitting: false }',
-    'x-on:submit': 'submitting = true',
-  })
-    @field.root({ name: 'email' })
-      @!field.label({ text: 'Email' })
-      @!input.control({
-        type: 'email',
-        autocomplete: 'username',
-        placeholder: 'you@example.com',
+@layouts.app({ title: 'Connexion' })
+  <div class="auth">
+    <div class="auth__card">
+      <h1 class="auth__title">Connexion</h1>
+      <p class="auth__sub">Retrouvez l'historique de vos QR codes.</p>
+
+      @form({
+        route: 'session.store',
+        class: 'auth__form',
+        novalidate: true,
+        'x-data': '{ submitting: false }',
+        'x-on:submit': 'submitting = true',
       })
-      @!field.error()
-    @end
-    @field.root({ name: 'password' })
-      @!field.label({ text: 'Password' })
-      @!input.control({
-        type: 'password',
-        autocomplete: 'current-password',
-        placeholder: '••••••••',
-      })
-      @!field.error()
-    @end
-    @!button({
-      text: 'Sign in',
-      type: 'submit',
-      block: true,
-      style: 'margin-top: 4px;',
-      'x-bind:disabled': 'submitting',
-      'x-text': "submitting ? 'One moment…' : 'Sign in'",
-    })
-  @end
+        @field.root({ name: 'email' })
+          @!field.label({ text: 'Adresse e-mail' })
+          @!input.control({
+            type: 'email',
+            autocomplete: 'username',
+            placeholder: 'vous@exemple.fr',
+          })
+          @!field.error()
+        @end
+        @field.root({ name: 'password' })
+          @!field.label({ text: 'Mot de passe' })
+          @!input.control({ type: 'password', autocomplete: 'current-password' })
+          @!field.error()
+        @end
+        @!button({
+          text: 'Se connecter',
+          type: 'submit',
+          block: true,
+          'x-bind:disabled': 'submitting',
+          'x-text': "submitting ? 'Un instant…' : 'Se connecter'",
+        })
+      @end
 
-  <p class="auth__foot">
-    
-
-    New here?
-
-
-    @link({ route: 'new_account.create', class: 'il' })
-      Create an account
-    @end
-  </p>
+      <p class="auth__foot">
+        Pas encore de compte ?
+        @link({ route: 'new_account.create', class: 'il' })
+          Créer un compte
+        @end
+      </p>
+    </div>
+  </div>
 @end

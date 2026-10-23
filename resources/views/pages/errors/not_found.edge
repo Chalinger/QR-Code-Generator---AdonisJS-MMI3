@@ -1,16 +1,13 @@
-@marketing()
-  <div class="home">
-    <article class="prose-card">
-      <div class="pc-top">
-        <span class="pc-status mono tag" style="color: var(--subtle);">
-          <span class="dot"></span>
-          404
-        </span>
-      </div>
-      <div class="pc-lead"><span>Not found.</span> <em>That route hasn't been built yet.</em></div>
-      <p class="pc-para">
-        The page you tried to reach doesn't exist. Check the URL or head back home.
-      </p>
-    </article>
+{{-- Affichée en production seulement (renderStatusPages dans app/exceptions/handler.ts) --}}
+@layouts.app({ title: 'Page introuvable' })
+  <div class="error-page">
+    <p class="error-page__code mono">404</p>
+    <h1 class="error-page__title">Page introuvable</h1>
+    <p class="error-page__text">
+      Cette page n'existe pas, ou ce QR code ne fait pas partie de votre historique.
+    </p>
+    @link({ route: 'home', class: 'btn btn--primary' })
+      Retour à l'accueil
+    @end
   </div>
 @end

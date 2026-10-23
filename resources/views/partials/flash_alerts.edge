@@ -1,10 +1,15 @@
+{{--
+  Messages flash (session.flash() dans les contrôleurs), affichés une seule fois.
+  flashMessages?. : sur une URL inconnue, le middleware de session ne s'exécute
+  pas et flashMessages n'existe pas (page 404).
+--}}
 <div class="flash-container">
-  @if(flashMessages.has('error'))
+  @if(flashMessages?.has('error'))
     @alert.root({ variant: 'destructive', autoDismiss: true })
       @!alert.title({ text: flashMessages.get('error') })
     @end
   @end
-  @if(flashMessages.has('success'))
+  @if(flashMessages?.has('success'))
     @alert.root({ variant: 'success', autoDismiss: true })
       @!alert.title({ text: flashMessages.get('success') })
     @end
